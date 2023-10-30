@@ -5,6 +5,9 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const helmet = require('helmet');
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerJSDoc = require('swagger-jsdoc');
+
 
 var indexRouter = require('./routes/index');
 
@@ -20,6 +23,24 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+const options = {
+  swaggerDefinition: {
+    swagger: '2.0',
+    info: {
+      title: 'My API',
+      version: '1.0.0'
+    },
+    basePath: '/',
+    paths: {},
+    definitions: {}
+  },
+  apis: ['./routes/*.js']
+};
+
+const swaggerSpec = swaggerJSDoc(options);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/', indexRouter);
 
